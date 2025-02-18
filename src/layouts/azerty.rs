@@ -7,6 +7,8 @@ use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 /// The top row spells `AZERTY`.
 ///
 /// Has a 2-row high Enter key, with Oem5 next to the left shift (ISO format).
+///
+/// NB: no "dead key" support for now
 pub struct Azerty;
 
 impl KeyboardLayout for Azerty {
@@ -516,7 +518,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::NumpadEnter => DecodedKey::Unicode(10.into()),
-            KeyCode::LShift => DecodedKey::Unicode('<'),
             k => DecodedKey::RawKey(k),
         }
     }
@@ -553,6 +554,10 @@ mod test {
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::Key4, KeyState::Down)),
             Some(DecodedKey::Unicode('\''))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Oem5, KeyState::Down)),
+            Some(DecodedKey::Unicode('<'))
         );
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::Oem7, KeyState::Down)),
